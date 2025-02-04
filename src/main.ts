@@ -1,4 +1,4 @@
-import { Editor, MarkdownView, Notice, Plugin } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin, WorkspacePluginInstance } from 'obsidian';
 import { DEFAULT_SETTINGS, MyPluginSettings } from './MyPluginSettings';
 import { SampleModal } from './SampleModal';
 import { SampleSettingTab } from './SampleSettingTab';
@@ -7,9 +7,11 @@ import { SampleSettingTab } from './SampleSettingTab';
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
+	workspaces: WorkspacePluginInstance;
 
 	async onload() {
 		await this.loadSettings();
+		this.workspaces = this.app.internalPlugins.getPluginById('workspaces').instance as WorkspacePluginInstance;
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
@@ -21,7 +23,7 @@ export default class MyPlugin extends Plugin {
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
+		statusBarItemEl.setText(`(${this.workspaces.activeWorkspace})`);
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
